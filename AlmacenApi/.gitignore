@@ -1,0 +1,12 @@
+appsettings.json
+appsettings.Development.json
+.env
+.vscode/
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.dbmdl
+*.log
+*.vsidx
