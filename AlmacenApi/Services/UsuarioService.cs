@@ -4,6 +4,7 @@ using AlmacenApi.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using AlmacenApi.Utils;
 
 namespace AlmacenApi.Services
 {
@@ -53,8 +54,10 @@ namespace AlmacenApi.Services
             cmd.CommandText = "sp_agregarUsuario";
             cmd.CommandType = CommandType.StoredProcedure;
 
+            var hash = SeguridadService.HashSHA256(dto.Contrasenia);
+
             cmd.Parameters.Add(new SqlParameter("@nombre", dto.Nombre));
-            cmd.Parameters.Add(new SqlParameter("@contrasenia", dto.Contrasenia));
+            cmd.Parameters.Add(new SqlParameter("@contrasenia", hash));
 
             try
             {
@@ -78,7 +81,12 @@ namespace AlmacenApi.Services
 
             cmd.Parameters.Add(new SqlParameter("@idUsuario", dto.IdUsuario));
             cmd.Parameters.Add(new SqlParameter("@nombre", string.IsNullOrWhiteSpace(dto.Nombre) ? DBNull.Value : dto.Nombre));
-            cmd.Parameters.Add(new SqlParameter("@contrasenia", string.IsNullOrWhiteSpace(dto.Contrasenia) ? DBNull.Value : dto.Contrasenia));
+
+            var hash = string.IsNullOrWhiteSpace(dto.Contrasenia)
+                ? (object)DBNull.Value
+    :           SeguridadService.HashSHA256(dto.Contrasenia);
+
+            cmd.Parameters.Add(new SqlParameter("@contrasenia", hash));
 
             try
             {
